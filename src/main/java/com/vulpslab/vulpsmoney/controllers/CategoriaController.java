@@ -38,11 +38,11 @@ public class CategoriaController {
 
     @GetMapping("/categorias/{id}")
     public ResponseEntity<Object> show(@PathVariable Long id){
-        Optional<Categoria> categoria =  repository.findById(id);
-        if(categoria.isEmpty()){
+        Optional<Categoria> categoriaOpt =  repository.findById(id);
+        if(categoriaOpt.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Categoria " + id + " não encontrada.");
         }
-        return ResponseEntity.status(HttpStatus.OK).body(categoria.get());
+        return ResponseEntity.status(HttpStatus.OK).body(categoriaOpt.get());
     }
     
     @PutMapping("/categorias/{id}")

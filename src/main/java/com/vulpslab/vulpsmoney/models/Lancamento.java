@@ -17,14 +17,16 @@ public class Lancamento {
     private LocalDate data;
     private String descricao;
     private Categoria categoria;
+    private Origem origem;
 
     public Lancamento() {
     }
 
-    public Lancamento(LocalDate data, String descricao, Categoria categoria) {
+    public Lancamento(LocalDate data, String descricao, Categoria categoria, Origem origem) {
         this.data = data;
         this.descricao = descricao;
         this.categoria = categoria;
+        this.origem = origem;
     }
 
     public Long getId() {
@@ -59,9 +61,17 @@ public class Lancamento {
         this.categoria = categoria;
     }
 
+    public Origem getOrigem() {
+        return origem;
+    }
+
+    public void setOrigem(Origem origem) {
+        this.origem = origem;
+    }
+
     @Override
     public int hashCode() {
-        return Objects.hash(this.id, this.data, this.descricao, this.categoria);
+        return Objects.hash(this.id, this.data, this.descricao, this.categoria, this.origem);
     }
 
     @Override
@@ -93,12 +103,17 @@ public class Lancamento {
                 return false;
         } else if (!categoria.equals(other.categoria))
             return false;
+        if (origem == null) {
+            if (other.origem != null)
+                return false;
+        } else if (!origem.equals(other.origem))
+            return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "Lancamento [id=" + id + ", data=" + data + ", descricao=" + descricao + ", categoria=" + categoria
+        return "Lancamento [id=" + id + ", data=" + data + ", descricao=" + descricao + ", categoria=" + categoria + ", origem=" + origem
                 + "]";
     }
 }
