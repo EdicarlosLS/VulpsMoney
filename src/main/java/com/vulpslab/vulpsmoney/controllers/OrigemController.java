@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.vulpslab.vulpsmoney.models.Lancamento;
 import com.vulpslab.vulpsmoney.models.Origem;
+import com.vulpslab.vulpsmoney.repositories.LancamentoRepository;
 import com.vulpslab.vulpsmoney.repositories.OrigemRepository;
 
 @RestController
@@ -22,6 +24,9 @@ public class OrigemController {
 
     @Autowired
     private OrigemRepository repository;
+    
+    @Autowired
+    private LancamentoRepository lancamentoRepository;
 
     @GetMapping("/origens")
     public ResponseEntity<List<Origem>> index(){
@@ -58,6 +63,19 @@ public class OrigemController {
         Optional<Origem> origemOpt = repository.findById(id);
         if(origemOpt.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Origem " + id + " não encontrada");
+        }
+
+        if(id == 1){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Origem padrão não pode ser deletada.");
+        }
+
+        List<Lancamento> lancamentos = lancamentoRepository.findByOrigem(origemOpt.get());
+        if(lancamentos.size() > 0){
+            Origem origemPadrao = repository.findById(1L).get();
+            for (Lancamento lancamento : lancamentos) {
+                lancamento.setOrigem(origemPadrao);
+                lancamentoRepository.save(lancamento);
+            }
         }
 
         repository.delete(origemOpt.get());
