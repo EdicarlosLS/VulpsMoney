@@ -9,7 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.vulpslab.vulpsmoney.models.Categoria;
+import com.vulpslab.vulpsmoney.models.Lancamento;
 import com.vulpslab.vulpsmoney.repositories.CategoriaRepository;
+import com.vulpslab.vulpsmoney.repositories.LancamentoRepository;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +27,9 @@ public class CategoriaController {
 
     @Autowired
     private CategoriaRepository repository;
+
+    @Autowired
+    private LancamentoRepository lancamentoRepository;
 
     @GetMapping("/categorias")
     public ResponseEntity<List<Categoria>> index() {
@@ -65,6 +70,20 @@ public class CategoriaController {
         if(categoriaOpt.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Categoria " + id + " não encontrada.");
         }
+
+        if(id == 1){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Categoria padrão não pode ser deletada.");
+        }
+
+        List<Lancamento> lancamentos = lancamentoRepository.findByCategoria(categoriaOpt.get());
+        if(lancamentos.size() > 0){
+            Categoria categoriaPadrao = repository.findById(1L).get();
+            for (Lancamento lancamento : lancamentos) {
+                lancamento.setCategoria(categoriaPadrao);
+                lancamentoRepository.save(lancamento);
+            }
+        }
+
         repository.delete(categoriaOpt.get());
         
         return ResponseEntity.status(HttpStatus.OK).body("Categoria deletada com sucesso.");
