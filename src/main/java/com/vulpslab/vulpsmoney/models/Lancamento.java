@@ -18,6 +18,7 @@ public class Lancamento {
     private Long id;
     private LocalDate data;
     private String descricao;
+    private double valor;
 
     @ManyToOne
     @JoinColumn(name = "categoria_id")
@@ -30,9 +31,10 @@ public class Lancamento {
     public Lancamento() {
     }
 
-    public Lancamento(LocalDate data, String descricao, Categoria categoria, Origem origem) {
+    public Lancamento(LocalDate data, String descricao, double valor, Categoria categoria, Origem origem) {
         this.data = data;
         this.descricao = descricao;
+        this.valor = valor;
         this.categoria = categoria;
         this.origem = origem;
     }
@@ -61,6 +63,14 @@ public class Lancamento {
         this.descricao = descricao;
     }
 
+    public double getValor(){
+        return this.valor;
+    }
+
+    public void setValor(double valor){
+        this.valor = valor;
+    }
+
     public Categoria getCategoria() {
         return categoria;
     }
@@ -79,7 +89,7 @@ public class Lancamento {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.id, this.data, this.descricao, this.categoria, this.origem);
+        return Objects.hash(this.id, this.data, this.descricao, this.valor, this.categoria, this.origem);
     }
 
     @Override
@@ -106,6 +116,8 @@ public class Lancamento {
                 return false;
         } else if (!descricao.equals(other.descricao))
             return false;
+        if(this.valor != other.getValor())
+            return false;
         if (categoria == null) {
             if (other.categoria != null)
                 return false;
@@ -121,7 +133,7 @@ public class Lancamento {
 
     @Override
     public String toString() {
-        return "Lancamento [id=" + id + ", data=" + data + ", descricao=" + descricao + ", categoria=" + categoria + ", origem=" + origem
+        return "Lancamento [id=" + id + ", data=" + data + ", descricao=" + descricao + ", valor=" + valor + ", categoria=" + categoria + ", origem=" + origem
                 + "]";
     }
 }
