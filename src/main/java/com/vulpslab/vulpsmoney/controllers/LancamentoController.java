@@ -101,4 +101,71 @@ public class LancamentoController {
         return ResponseEntity.status(HttpStatus.OK).body("Lancamento deletado com sucesso.");
     }
 
+    @GetMapping("/lancamentos/resumo")
+    public ResponseEntity<Object> summary(){
+        double acumulado = 0;
+        List<Lancamento> lancamentos = lancamentoRepository.findAll();
+        for(Lancamento l : lancamentos){
+            acumulado += l.getValor();
+        }
+
+        return ResponseEntity.ok(acumulado);
+    }
+
+    @GetMapping("/lancamentos/resumo/{year}")
+    public ResponseEntity<Object> summaryByYear(@PathVariable int year){
+        double acumulado = 0;
+        List<Lancamento> lancamentos = lancamentoRepository.findByYear(year);
+        for(Lancamento l : lancamentos){
+            acumulado += l.getValor();
+        }
+
+        return ResponseEntity.ok(acumulado);
+    }
+
+    @GetMapping("/lancamentos/resumo/{year}/{month}")
+    public ResponseEntity<Object> summaryByYearAndMonth(@PathVariable int year, @PathVariable int month){
+        double acumulado = 0;
+        List<Lancamento> lancamentos = lancamentoRepository.findByYearAndMonth(year, month);
+        for(Lancamento l : lancamentos){
+            acumulado += l.getValor();
+        }
+
+        return ResponseEntity.ok(acumulado);
+    }
+
+    @GetMapping("/lancamentos/resumo/{year}/{month}/categoria/{categoria}")
+    public ResponseEntity<Object> summaryByYearAndMonthAndCategoria(@PathVariable int year, @PathVariable int month, @PathVariable String categoria){
+        double acumulado = 0;
+
+        List<Categoria> categorias = categoriaRepository.findByTitulo(categoria);
+        if(categorias.size() == 0){
+            return ResponseEntity.ok(acumulado);
+        }
+
+        List<Lancamento> lancamentos = lancamentoRepository.findByYearAndMonthAndCategoria(year, month, categorias.get(0));
+        for(Lancamento l : lancamentos){
+            acumulado += l.getValor();
+        }
+
+        return ResponseEntity.ok(acumulado);
+    }
+    
+    @GetMapping("/lancamentos/resumo/{year}/categoria/{categoria}")
+    public ResponseEntity<Object> summaryByYearAndCategoria(@PathVariable int year, @PathVariable String categoria){
+        double acumulado = 0;
+
+        List<Categoria> categorias = categoriaRepository.findByTitulo(categoria);
+        if(categorias.size() == 0){
+            return ResponseEntity.ok(acumulado);
+        }
+
+        List<Lancamento> lancamentos = lancamentoRepository.findByYearAndCategoria(year, categorias.get(0));
+        for(Lancamento l : lancamentos){
+            acumulado += l.getValor();
+        }
+
+        return ResponseEntity.ok(acumulado);
+    }
+
 }
