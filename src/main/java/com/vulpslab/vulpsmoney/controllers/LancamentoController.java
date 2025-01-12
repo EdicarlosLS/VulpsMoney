@@ -1,6 +1,7 @@
 package com.vulpslab.vulpsmoney.controllers;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,6 +67,28 @@ public class LancamentoController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Lancamento " + id + " não encontrado.");
         }
         return ResponseEntity.status(HttpStatus.OK).body(lancamentoOpt.get());
+    }
+
+    @GetMapping("/lancamentos/categoria/{categoria}")
+    public ResponseEntity<List<Lancamento>> indexbyCategoria(@PathVariable String categoria){
+
+        List<Categoria> categorias = categoriaRepository.findByTitulo(categoria);
+        if(categorias.size() != 0){
+            return ResponseEntity.status(HttpStatus.OK).body(lancamentoRepository.findByCategoria(categorias.get(0)));
+        }
+
+       return ResponseEntity.status(HttpStatus.OK).body(new ArrayList<>());
+    }
+
+    @GetMapping("/lancamentos/origem/{origem}")
+    public ResponseEntity<List<Lancamento>> indexbyOrigem(@PathVariable String origem){
+
+        List<Origem> origens = origemRepository.findByTitulo(origem);
+        if(origens.size() != 0){
+            return ResponseEntity.status(HttpStatus.OK).body(lancamentoRepository.findByOrigem(origens.get(0)));
+        }
+
+       return ResponseEntity.status(HttpStatus.OK).body(new ArrayList<>());
     }
 
     @PutMapping("/lancamentos/{id}")
